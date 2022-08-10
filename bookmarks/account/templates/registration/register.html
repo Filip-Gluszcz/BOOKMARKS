@@ -8,7 +8,7 @@ Utwórz konto
 <h1>Utwórz konto</h1>
 <p>Wypełnij poniższy formularz, aby się zarejestrować.</p>
 <form action="." method="post">
-    {{ form.as_p }}
+    {{ user_form.as_p }}
     {% csrf_token %}
     <p><input type="submit" value="Utwórz konto"></p>
 </form>
