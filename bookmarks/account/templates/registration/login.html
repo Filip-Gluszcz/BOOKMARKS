@@ -24,4 +24,17 @@ Spróbuj ponownie.
     </form>
     <p><a href="{% url 'password_reset' %}">Zapomniałeś hasła?</a></p>
 </div>
+<div class="social">
+    <ul>
+        <li class="facebook">
+            <a href="{% url 'social:begin' 'facebook' %}">Zaloguj się za pomocą konta Facebook</a>
+        </li>
+        <li class="twitter">
+            <a href="{% url 'social:begin' 'twitter' %}">Zaloguj się za pomocą konta Twitter</a>
+        </li>
+        <li class="google">
+            <a href="{% url 'social:begin' 'google-oauth2' %}">Zaloguj się za pomocą konta Google</a>
+        </li>
+    </ul>
+</div>
 {% endblock content %}
