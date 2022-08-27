@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from telnetlib import LOGOUT
+from telnetlib import AUTHENTICATION, LOGOUT
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,19 +27,26 @@ SECRET_KEY = 'iw8pi^j^aop=1svs@t1i13o)u2nzk-#a0#sb=y-m25f0*eyg64'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['witryna.pl', 'localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
+    'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'social_django',
+    'django_extensions',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +72,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # ######
+                # 'social_django.context_processors.backends', # added
+                # 'social_django.context_processors.login_redirect', # added
+                # ######
             ],
         },
     },
@@ -101,6 +113,41 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'account.authentication.EmailAuthBackend',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.google.GoogleOAuth2',
+]
+
+# FACEBOOK
+#
+SOCIAL_AUTH_FACEBOOK_KEY = '393987162859165'
+SOCIAL_AUTH_FACEBOOK_SECRET = '04daaba2662c3fbb1654896c7e8481e3'
+
+# TWITTER
+#
+SOCIAL_AUTH_TWITTER_KEY = 'qTde6P9q5mZjjXQj9HUQL8Pxb'
+SOCIAL_AUTH_TWITTER_SECRET = 'uMUUupjdOay6BEyRDUGFLrWJ1rGhoLP0vXlAAfCS1E3uLT8EQC'
+
+# GOOGLE
+#
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '638395614497-e64c47adjiqg167plvakokv2bsdrsk8m.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'account.pipeline.save_profile',  # <--- create profile
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -129,3 +176,7 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda user: reverse_lazy('user_detail', args=[user.username])
+}

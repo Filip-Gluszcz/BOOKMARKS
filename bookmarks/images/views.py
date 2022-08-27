@@ -1,3 +1,4 @@
+from actions.utils import create_action
 from common.decorators import ajax_required
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,7 @@ def image_create(request):
             new_image = form.save(commit=False)
             new_image.user = request.user
             new_image.save()
+            create_action(request.user, 'dodał obraz', new_image)
             messages.success(request, 'Obraz został dodany')
             return redirect(new_image.get_absolute_url())
     
@@ -39,7 +41,9 @@ def image_like(request):
     if image_id and action:
         try:
             image = Image.objects.get(id=image_id)
-            if action == 'like': image.users_like.add(request.user)
+            if action == 'like': 
+                image.users_like.add(request.user)
+                create_action(request.user, 'polubił', image)
             else: image.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
         except:
@@ -58,9 +62,10 @@ def image_list(request):
     except PageNotAnInteger:
         images = paginator.page(1)
     except EmptyPage:
-        if request.is_ajax(): return HttpResponse('')
+        if request.is_ajax():
+            return HttpResponse('')
         images = paginator(paginator.num_pages)
-
+        
     if request.is_ajax(): return render(request, 'images/image/list_ajax.html', {'section': 'images', 'images': images})
 
     return render(request, 'images/image/list.html', {'section': 'images', 'images': images})
