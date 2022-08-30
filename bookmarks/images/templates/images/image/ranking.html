@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block title %}
+Ranking obrazów
+{% endblock title %}
+
+{% block content %}
+<h1>Ranking obrazów</h1>
+<ol>
+    {% for image in most_viewed %}
+        {% thumbnail image.image 80x80 crop="100%" as im %}
+        <li>
+            <div class="action">
+                <div class="images">
+                    <a href="{{ image.get_absolute_url }}">
+                        <img src="{{ im.url }}" class="item-img">
+                    </a>
+                </div>
+                <div class="info">
+                    <p>
+                        <span class="date">
+                            {{image.user.get_full_name}}
+                        </span>
+                        <br />
+                        <a href="{{ image.get_absolute_url }}">
+                            {{ image.title }}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ol>
+
+{% endblock content %}

@@ -16,6 +16,9 @@ Szczegóły zdjęcia
         <span class="count">
             <span class="total">{{ total_likes }}</span> polubień
         </span>
+        <span class="count">
+            <span class="total">{{ total_views }}</span> wyświetleń
+        </span>
         <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in user_like %}un{% endif %}like" class="like button">
             {% if request.user not in user_like %}
             Lubię
